@@ -11,13 +11,19 @@ class ProductListViewController: UIViewController {
     private let tableView = UITableView()
     let viewModel = ProductListViewModel()
     
+    let searchBar = UISearchBar()
+    var searchWorkItem: DispatchWorkItem?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupSearchBar()
+        
         bindViewModel()
         viewModel.fetchProducts()
+        
     }
-
+    
     private func setupUI() {
         title = "Products"
         view.addSubview(tableView)
@@ -25,7 +31,7 @@ class ProductListViewController: UIViewController {
         tableView.dataSource = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
     }
-
+    
     private func bindViewModel() {
         viewModel.reloadData = { [weak self] in
             DispatchQueue.main.async {
