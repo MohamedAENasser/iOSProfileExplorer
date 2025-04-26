@@ -30,10 +30,10 @@ class ProductListViewModel {
     }
 
     func numberOfItems() -> Int {
-        return products.count
+        products.count
     }
 
     func product(at index: Int) -> Product {
-        return products[index]
+        products[index]
     }
 }

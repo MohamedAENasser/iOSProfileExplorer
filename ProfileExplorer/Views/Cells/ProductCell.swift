@@ -62,10 +62,10 @@ class ProductCell: UITableViewCell {
     }
 
     @objc private func updateCountdown() {
-        guard let end = endDate else { return }
+        guard let endDate else { return }
 
         let now = Date()
-        let remaining = end.timeIntervalSince(now)
+        let remaining = endDate.timeIntervalSince(now)
 
         if remaining <= 0 {
             countdownLabel.text = "Ended"
