@@ -11,9 +11,19 @@ final class ProfileViewController: UIViewController {
 
     private let viewModel = ProfileViewModel()
     private let searchBar = UISearchBar()
-    private let tableView = UITableView()
     private let profileImageView = UIImageView()
     private let nameLabel = UILabel()
+    private lazy var collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.minimumInteritemSpacing = 8
+        layout.minimumLineSpacing = 8
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.register(ProductCell.self, forCellWithReuseIdentifier: ProductCell.identifier)
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.backgroundColor = .systemBackground
+        return collectionView
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,10 +39,6 @@ final class ProfileViewController: UIViewController {
         searchBar.delegate = self
         searchBar.placeholder = "Search products"
         
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(ProductCell.self, forCellReuseIdentifier: ProductCell.identifier)
-        
         profileImageView.contentMode = .scaleAspectFill
         profileImageView.layer.cornerRadius = 40
         profileImageView.layer.masksToBounds = true
@@ -46,7 +52,7 @@ final class ProfileViewController: UIViewController {
         profileStack.spacing = 8
         profileStack.alignment = .center
         
-        let stack = UIStackView(arrangedSubviews: [profileStack, searchBar, tableView])
+        let stack = UIStackView(arrangedSubviews: [profileStack, searchBar, collectionView])
         stack.axis = .vertical
         stack.spacing = 12
         stack.translatesAutoresizingMaskIntoConstraints = false
@@ -85,7 +91,7 @@ final class ProfileViewController: UIViewController {
             nameLabel.text = user.name
             profileImageView.loadImage(from: user.image)
         }
-        tableView.reloadData()
+        collectionView.reloadData()
     }
 }
 
@@ -96,21 +102,28 @@ extension ProfileViewController: UISearchBarDelegate {
     }
 }
 
-// MARK: - TableView Delegate & DataSource
-extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
+// MARK: - Collection Delegate & DataSource
+extension ProfileViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.filteredProducts.count
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        viewModel.filteredProducts.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: ProductCell.identifier, for: indexPath) as? ProductCell else {
-            return UITableViewCell()
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ProductCell.identifier, for: indexPath) as? ProductCell else {
+            return UICollectionViewCell()
         }
-        
-        let product = viewModel.filteredProducts[indexPath.row]
+        let product = viewModel.filteredProducts[indexPath.item]
         cell.configure(with: product)
         return cell
+    }
+    
+    // MARK: - Grid Layout 3 columns
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        let totalSpacing: CGFloat = 8 * 2 + 8 * 2  // 2 sides + 2 spaces between cells
+        let width = (collectionView.frame.width - totalSpacing) / 3
+        
+        return CGSize(width: width, height: width + 60) // Height to fit image + text
     }
 }
