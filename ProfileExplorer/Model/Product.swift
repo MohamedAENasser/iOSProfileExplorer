@@ -10,8 +10,8 @@ import Foundation
 struct Product: Codable {
     let id: Int
     let name: String
-    let imageUrl: String
     let price: Double
-    let endDate: Date?
-    let isSpecialOffer: Bool
+    let image: String
+    let endDate: String
+    let specialLabel: String?
 }
