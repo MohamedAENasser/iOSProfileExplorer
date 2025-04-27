@@ -78,7 +78,7 @@ final class ProductCell: UITableViewCell {
         
         timer?.stop()
         timer = CountdownTimer()
-        if let endDate = ISO8601DateFormatter().date(from: product.endDate) {
+        if let endDate = ISO8601DateFormatter().date(from: product.endDate ?? "") {
             timer?.start(endDate: endDate) { [weak self] timeString in
                 self?.countdownLabel.text = timeString
             }

@@ -12,6 +12,6 @@ struct Product: Codable {
     let name: String
     let price: Double
     let image: String
-    let endDate: String
+    let endDate: String?
     let specialLabel: String?
 }
